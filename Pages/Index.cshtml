@@ -22,10 +22,14 @@
             <tr>
                 <td>@item.EmailSender</td>
                 <td>
-                    @if (item.EmailIsRead.Equals("0")) {
-                        <img src="images/yellow.gif" height="10pt"> 
+                    @if (item.EmailIsRead.Equals("0"))
+                    {
+                        <a href="ReadEmail/@item.EmailID"><img src="images/yellow.gif" height="10pt"> @item.EmailSubject </a>
                     }
-                    <a href="ReadEmail/@item.EmailID">@item.EmailSubject</a>
+                    else
+                    {
+                        <a href="ReadEmail/@item.EmailID">@item.EmailSubject</a>
+                    }
                 </td>
                 
                 <td>@item.EmailDate</td>

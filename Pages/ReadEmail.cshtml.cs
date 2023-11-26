@@ -35,6 +35,13 @@ namespace FinalProject.Pages
                 {
                     connection.Open();
 
+                    string updateQuery = "UPDATE emails SET EmailIsRead = '1' WHERE EmailID = @EmailID";
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@EmailID", emailId);
+                        updateCommand.ExecuteNonQuery(); 
+                    }
+
                     string query = "SELECT EmailID, EmailSubject, EmailMessage, EmailDate, EmailIsRead, EmailSender, EmailReceiver FROM emails WHERE EmailID = @EmailID";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
