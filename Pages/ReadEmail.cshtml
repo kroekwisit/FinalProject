@@ -1,0 +1,15 @@
+﻿@page "{emailId:int}"
+@model FinalProject.Pages.ReadEmailModel
+
+<h1>@Model.Email.EmailSubject</h1>
+<p>From: @Model.Email.EmailSender</p>
+<p>Date: @Model.Email.EmailDate</p>
+
+<hr />
+
+<div>
+    <p>@Model.Email.EmailMessage</p>
+</div>
+
+<a class="btn btn-primary" asp-page="/Index">Back to Inbox</a>
+
