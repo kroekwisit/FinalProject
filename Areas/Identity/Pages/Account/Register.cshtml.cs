@@ -56,27 +56,32 @@ namespace FinalProject.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [StringLength(255, ErrorMessage = "The First Name must be in between 1 to 255.", MinimumLength = 1)]
+            [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The {0} must contain only characters.")]
+            [StringLength(255, ErrorMessage = "The {0} must be in between 1 to 255.", MinimumLength = 1)]
             public string FirstName { get; set; }
 
             [Required]
-            [StringLength(255, ErrorMessage = "The Last Name must be in between 1 to 255.", MinimumLength = 1)]
+            [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The {0} must contain only characters.")]
+            [StringLength(255, ErrorMessage = "The {0} must be in between 1 to 255.", MinimumLength = 1)]
             public string LastName { get; set; }
 
             [Required]
-            [StringLength(15, ErrorMessage = "The Mobile Phone must be in between 7 to 15.", MinimumLength = 7)]
+            [RegularExpression(@"^[0-9]+$", ErrorMessage = "The Mobile Phone must contain only numbers.")]
+            [StringLength(15, ErrorMessage = "The Mobile Phone must be between 7 to 15.", MinimumLength = 7)]
             public string MobilePhone { get; set; }
 
-            [Required]
-            [StringLength(255, ErrorMessage = "The Username must be between 1 to 255.", MinimumLength = 1)]
+            [RegularExpression(@"^(?=.*[a-zA-Z])[a-zA-Z0-9._-]{1,}$",
+            ErrorMessage = "The Username must contain at least one letter and should not contain spaces.")]
             public string UserName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [RegularExpression(@"^\S+$", ErrorMessage = "The Password must not contain spaces.")]
             public string Password { get; set; }
         }
 
+ 
 
         public async Task OnGetAsync(string returnUrl = null)
         {

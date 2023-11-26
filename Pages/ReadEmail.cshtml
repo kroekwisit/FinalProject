@@ -26,10 +26,31 @@
             </div>
 
             <div class="text-center mt-4">
-                <a class="btn btn-primary mr-2" asp-page="/Reply">Reply</a> <!-- Added Reply button -->
+                <a class="btn btn-primary mr-2" asp-page="/Reply">Reply</a>
                 <a class="btn btn-primary mr-2" asp-page="/Index">Back to Inbox</a>
-                <a class="btn btn-danger" asp-page="/Delete">Delete</a> <!-- Added Delete button -->
+                <a class="btn btn-danger delete-email" data-emailid="@Model.Email.EmailID">Delete</a>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const deleteButtons = document.querySelectorAll(".delete-email");
+
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const emailId = this.getAttribute("data-emailid");
+                    const confirmDelete = confirm("Are you sure you want to delete this email?");
+
+                    if (confirmDelete) {
+                        window.location.href = `/Index?handler=DeleteEmail&emailid=${emailId}`;
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

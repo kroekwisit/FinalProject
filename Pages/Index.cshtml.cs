@@ -1,8 +1,7 @@
-﻿using FinalProject.Areas.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -17,6 +16,32 @@ namespace FinalProject.Pages
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
+        }
+
+        public IActionResult OnGetDeleteEmail(int emailid)
+        {
+            try
+            {
+                String connectionString = "Server=tcp:finalprojectggez.database.windows.net,1433;Initial Catalog=FinalProject;Persist Security Info=False;User ID=ggez;Password=Peepam01;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"; // Update with your connection string
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    String sql = "DELETE FROM emails WHERE EmailID = @EmailID";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@EmailID", emailid);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                return RedirectToPage("/Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return Page(); // You might want to handle errors more gracefully
+            }
         }
 
         public void OnGet()
@@ -57,7 +82,6 @@ namespace FinalProject.Pages
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                // Handle exceptions
             }
         }
     }

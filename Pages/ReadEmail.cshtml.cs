@@ -21,11 +21,38 @@ namespace FinalProject.Pages
             return Page(); // Return the page with the email details
         }
 
+        public IActionResult OnGetDeleteEmail(int emailId)
+        {
+            try
+            {
+                String connectionString = "Server=tcp:finalprojectggez.database.windows.net,1433;Initial Catalog=FinalProject;Persist Security Info=False;User ID=ggez;Password=Peepam01;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"; // Replace with your database connection string
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    String deleteQuery = "DELETE FROM emails WHERE EmailID = @EmailID";
+                    using (SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection))
+                    {
+                        deleteCommand.Parameters.AddWithValue("@EmailID", emailId);
+                        deleteCommand.ExecuteNonQuery();
+                    }
+                }
+
+                // Redirect back to the Index page after successful deletion
+                return RedirectToPage("/Index");
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or errors gracefully
+                Console.WriteLine(ex.ToString());
+                return Page(); // You might want to handle errors more gracefully
+            }
+        }
+
         private EmailInfo GetEmailById(int emailId)
         {
-            // Replace this with your logic to fetch email details from the database or any other source
-            // This is a placeholder method and should be replaced with your actual implementation
-            string connectionString = "Server=tcp:finalprojectggez.database.windows.net,1433;Initial Catalog=FinalProject;Persist Security Info=False;User ID=ggez;Password=Peepam01;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"; // Replace with your database connection string
+            String connectionString = "Server=tcp:finalprojectggez.database.windows.net,1433;Initial Catalog=FinalProject;Persist Security Info=False;User ID=ggez;Password=Peepam01;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"; // Replace with your database connection string
 
             EmailInfo email = null;
 
@@ -39,7 +66,7 @@ namespace FinalProject.Pages
                     using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
                     {
                         updateCommand.Parameters.AddWithValue("@EmailID", emailId);
-                        updateCommand.ExecuteNonQuery(); 
+                        updateCommand.ExecuteNonQuery();
                     }
 
                     string query = "SELECT EmailID, EmailSubject, EmailMessage, EmailDate, EmailIsRead, EmailSender, EmailReceiver FROM emails WHERE EmailID = @EmailID";
@@ -74,5 +101,4 @@ namespace FinalProject.Pages
             return email;
         }
     }
-
 }
