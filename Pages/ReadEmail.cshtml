@@ -1,15 +1,35 @@
 ﻿@page "{emailId:int}"
 @model FinalProject.Pages.ReadEmailModel
+@{
+    ViewData["Title"] = "Read Email";
+    Layout = "~/Pages/Shared/_Layout.cshtml"; // Assuming you have a layout file
+}
 
-<h1>@Model.Email.EmailSubject</h1>
-<p>From: @Model.Email.EmailSender</p>
-<p>Date: @Model.Email.EmailDate</p>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <h2 class="text-center">Read Email</h2>
 
-<hr />
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p><strong>From:</strong> @Model.Email?.EmailSender</p>
+                </div>
+                <div>
+                    <p><strong>Date:</strong> @Model.Email?.EmailDate</p>
+                </div>
+            </div>
+            <hr />
 
-<div>
-    <p>@Model.Email.EmailMessage</p>
+            <div class="text-left">
+                <p><strong>Subject:</strong> @Model.Email?.EmailSubject</p>
+                <p><strong>Message:</strong> @Model.Email?.EmailMessage</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a class="btn btn-primary mr-2" asp-page="/Reply">Reply</a> <!-- Added Reply button -->
+                <a class="btn btn-primary mr-2" asp-page="/Index">Back to Inbox</a>
+                <a class="btn btn-danger" asp-page="/Delete">Delete</a> <!-- Added Delete button -->
+            </div>
+        </div>
+    </div>
 </div>
-
-<a class="btn btn-primary" asp-page="/Index">Back to Inbox</a>
-
