@@ -1,0 +1,83 @@
+﻿@page
+@model ComposeEmailModel
+@{
+    ViewData["Title"] = "Compose Email";
+}
+
+<style>
+    /* CSS styles for centering and form layout */
+    .compose-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh; /* Adjust the height as needed */
+    }
+
+    .compose-form {
+        max-width: 600px;
+        width: 100%;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        text-align: left; /* Align labels and input fields to the left */
+    }
+
+        .compose-form label {
+            margin-bottom: 5px;
+            display: block;
+            font-weight: bold;
+            color: black; /* Change label text color to black */
+        }
+
+        .compose-form input[type="email"],
+        .compose-form input[type="text"],
+        .compose-form textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            color: black; /* Change input text color to black */
+        }
+
+        .compose-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .compose-form button:hover {
+                background-color: #0056b3;
+            }
+</style>
+
+<div class="compose-container">
+    <h1>New Message</h1>
+
+    <form class="compose-form" method="post">
+        <div>
+            <label for="toField">To:</label>
+            <input type="text" id="toField" name="ToUserName" required />
+        </div>
+        <div>
+            <label for="subjectField">Subject:</label>
+            <input type="text" id="subjectField" name="EmailSubject" required />
+        </div>
+        <div>
+            <label for="messageField">Message:</label>
+            <textarea id="messageField" name="EmailMessage" rows="6" required></textarea>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <button type="button" onclick="window.history.back();">Back</button>
+            <button type="submit">Send Email</button>
+        </div>
+    </form>
+
+</div>
