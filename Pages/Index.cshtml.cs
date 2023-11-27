@@ -18,6 +18,7 @@ namespace FinalProject.Pages
             _logger = logger;
         }
 
+
         public IActionResult OnGetDeleteEmail(int emailid)
         {
             try

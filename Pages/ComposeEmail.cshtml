@@ -56,6 +56,10 @@
             .compose-form button:hover {
                 background-color: #0056b3;
             }
+
+    .field-validation-error {
+        color: red; /* Change error message color to black */
+    }
 </style>
 
 <div class="compose-container">
@@ -64,20 +68,22 @@
     <form class="compose-form" method="post">
         <div>
             <label for="toField">To:</label>
-            <input type="text" id="toField" name="ToUserName" required />
+            <input type="text" id="toField" asp-for="Email.ToUserName" required />
+            <span asp-validation-for="Email.ToUserName"></span>
         </div>
         <div>
             <label for="subjectField">Subject:</label>
-            <input type="text" id="subjectField" name="EmailSubject" required />
+            <input type="text" id="subjectField" asp-for="Email.EmailSubject" required />
+            <span asp-validation-for="Email.EmailSubject"></span>
         </div>
         <div>
             <label for="messageField">Message:</label>
-            <textarea id="messageField" name="EmailMessage" rows="6" required></textarea>
+            <textarea id="messageField" asp-for="Email.EmailMessage" rows="6" required></textarea>
+            <span asp-validation-for="Email.EmailMessage"></span>
         </div>
         <div style="display: flex; justify-content: space-between;">
             <button type="button" onclick="window.history.back();">Back</button>
             <button type="submit">Send Email</button>
         </div>
     </form>
-
 </div>

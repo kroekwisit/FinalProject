@@ -6,112 +6,90 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
+using System.Security.Claims;
 
 namespace FinalProject.Pages
 {
     public class ComposeEmailModel : PageModel
     {
-        private readonly ILogger<ComposeEmailModel> _logger;
         private readonly string connectionString = "Server=tcp:finalprojectggez.database.windows.net,1433;Initial Catalog=FinalProject;Persist Security Info=False;User ID=ggez;Password=Peepam01;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"; // Replace with your connection string
 
-        public ComposeEmailModel(ILogger<ComposeEmailModel> logger)
-        {
-            _logger = logger;
-        }
+        [BindProperty]
+        public EmailModel Email { get; set; } // Model for composing the email
 
-        public void OnGet()
+        public async Task<IActionResult> OnPostAsync()
         {
-            // Optional: Add logic for OnGet if needed
-        }
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
 
-        public IActionResult OnPost(string ToEmail, string EmailSubject, string EmailMessage)
-        {
             try
             {
-                string senderEmail = User.Identity.Name; // Replace this with actual sender email or get it from your authentication system
+                string senderName = User.FindFirstValue(ClaimTypes.Name); // Get sender's name from claims
+
+                bool userExists = await CheckIfUserExists(Email.ToUserName);
+
+                if (!userExists)
+                {
+                    ModelState.AddModelError("Email.ToUserName", "User does not exist.");
+                    return Page();
+                }
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
-                    // Check if the recipient's email exists in the database
-                    if (!EmailExists(connection, ToEmail))
+                    string insertQuery = "INSERT INTO emails (emailsubject, emailmessage, emaildate, emailisread, emailsender, emailreceiver) " +
+                                         "VALUES (@EmailSubject, @EmailMessage, @EmailDate, @EmailIsRead, @EmailSender, @EmailReceiver)";
+
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
-                        TempData["WarningMessage"] = "The specified recipient email does not exist.";
-                        return Page();
-                    }
+                        command.Parameters.AddWithValue("@EmailSubject", Email.EmailSubject);
+                        command.Parameters.AddWithValue("@EmailMessage", Email.EmailMessage);
+                        command.Parameters.AddWithValue("@EmailDate", DateTime.UtcNow);
+                        command.Parameters.AddWithValue("@EmailIsRead", false);
+                        command.Parameters.AddWithValue("@EmailSender", senderName); // Use the retrieved sender name
+                        command.Parameters.AddWithValue("@EmailReceiver", Email.ToUserName);
 
-                    // Insert the composed email into the database
-                    string insertQuery = @"INSERT INTO emails (emailsubject, emailmessage, emaildate, emailisread, emailsender, emailreceiver)
-                                           VALUES (@EmailSubject, @EmailMessage, @EmailDate, @EmailIsRead, @EmailSender, @EmailReceiver)";
-
-                    using (SqlCommand insertCommand = new SqlCommand(insertQuery, connection))
-                    {
-                        insertCommand.Parameters.AddWithValue("@EmailSubject", EmailSubject);
-                        insertCommand.Parameters.AddWithValue("@EmailMessage", EmailMessage);
-                        insertCommand.Parameters.AddWithValue("@EmailDate", DateTime.Now);
-                        insertCommand.Parameters.AddWithValue("@EmailIsRead", 0); // Assuming newly composed emails are unread
-                        insertCommand.Parameters.AddWithValue("@EmailSender", senderEmail);
-                        insertCommand.Parameters.AddWithValue("@EmailReceiver", ToEmail);
-
-                        insertCommand.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
 
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Success");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending email");
-                // Handle the error gracefully - display an error message on the page
-                throw;
+                ModelState.AddModelError("", "An error occurred while processing your request. Please try again.");
+                return Page(); // Return to the same page to display the error message
             }
         }
 
-        private bool EmailExists(SqlConnection connection, string email)
+        private async Task<bool> CheckIfUserExists(string username)
         {
-            string query = "SELECT COUNT(*) FROM emails WHERE emailreceiver = @Email";
-
-            using (SqlCommand command = new SqlCommand(query, connection))
+            // Perform a query to check if the user exists in your user database table
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                command.Parameters.AddWithValue("@Email", email); // Bind the parameter using AddWithValue
+                await connection.OpenAsync();
 
-                object result = null;
-                command.CommandType = CommandType.Text;
+                string query = "SELECT COUNT(*) FROM AspNetUsers WHERE UserName = @UserName";
 
-                if (connection.State != ConnectionState.Open)
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    connection.Open();
-                }
+                    command.Parameters.AddWithValue("@UserName", username);
 
-                try
-                {
-                    result = command.ExecuteScalar();
+                    int userCount = (int)await command.ExecuteScalarAsync();
+                    return userCount > 0;
                 }
-                finally
-                {
-                    if (connection.State == ConnectionState.Open)
-                    {
-                        connection.Close();
-                    }
-                }
-
-                if (result != null && result != DBNull.Value)
-                {
-                    int count;
-                    if (int.TryParse(result.ToString(), out count))
-                    {
-                        return count > 0;
-                    }
-                }
-
-                return false;
             }
         }
+    }
 
 
-
-
+    public class EmailModel
+    {
+        public string ToUserName { get; set; }
+        public string EmailSubject { get; set; }
+        public string EmailMessage { get; set; }
     }
 }
