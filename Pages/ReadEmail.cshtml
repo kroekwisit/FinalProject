@@ -26,7 +26,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <a class="btn btn-primary mr-2" asp-page="/Reply">Reply</a>
+                <a class="btn btn-primary mr-2" asp-page="/Reply" asp-route-email="@Model.Email.EmailSender">Reply</a>
                 <a class="btn btn-primary mr-2" asp-page="/Index">Back to Inbox</a>
                 <a class="btn btn-danger delete-email" data-emailid="@Model.Email.EmailID">Delete</a>
             </div>

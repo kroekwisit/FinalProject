@@ -1,0 +1,36 @@
+﻿@page
+@model FinalProject.Pages.ReplyModel
+@{
+    ViewData["Title"] = "Reply Email";
+    Layout = "~/Pages/Shared/_Layout.cshtml"; // Assuming you have a layout file
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <h2 class="text-center">Reply Email</h2>
+
+            <form method="post">
+                <div class="form-group">
+                    <label for="toField">To:</label>
+                    <input type="text" id="toField" class="form-control" asp-for="ReplyEmail.ToUserName" readonly />
+                    <span asp-validation-for="ReplyEmail.ToUserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="subjectField">Subject:</label>
+                    <input type="text" id="subjectField" class="form-control" asp-for="ReplyEmail.EmailSubject" required />
+                    <span asp-validation-for="ReplyEmail.EmailSubject" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="messageField">Message:</label>
+                    <textarea id="messageField" class="form-control" asp-for="ReplyEmail.EmailMessage" rows="6" required></textarea>
+                    <span asp-validation-for="ReplyEmail.EmailMessage" class="text-danger"></span>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                    <a href="/Index" class="btn btn-secondary">Back to Inbox</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
