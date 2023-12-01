@@ -39,7 +39,10 @@
         }
     </tbody>
 </table>
-<a class="btn btn-primary btn-sm" href="/ComposeEmail?username=@User.Identity.Name">Compose New Email</a>
+@if (User.Identity.IsAuthenticated) // Check if the user is authenticated
+{
+    <a class="btn btn-primary btn-sm" href="/ComposeEmail?username=@User.Identity.Name">Compose New Email</a>
+}
 
 
 @section Scripts {
